@@ -11,11 +11,10 @@
   <img src="https://img.shields.io/github/issues/MacTash/Geoscope?style=flat-square" alt="Issues">
   <img src="https://img.shields.io/github/last-commit/MacTash/Geoscope?style=flat-square" alt="Last Commit">
   <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="Python Version">
+  <img src="https://img.shields.io/badge/Threat%20Intelligence-MultiINT-red?style=flat-square">
+  <img src="https://img.shields.io/badge/Status-Alpha-orange?style=flat-square">
+  <img src="https://img.shields.io/badge/LLM-SITREP%20Mode-success?style=flat-square">
 </p>
-
-<img src="https://img.shields.io/badge/Threat%20Intelligence-MultiINT-red?style=flat-square">
-<img src="https://img.shields.io/badge/Status-Alpha-orange?style=flat-square">
-<img src="https://img.shields.io/badge/LLM-SITREP%20Mode-success?style=flat-square">
 
 
 ## 🚀 Features
