@@ -1,0 +1,15 @@
+typer[all]
+rich
+sqlalchemy
+requests
+pandas
+folium
+python-dotenv
+newspaper3k
+feedparser
+duckduckgo-search
+beautifulsoup4
+lxml
+pystac-client
+geopy
+python-dateutil
