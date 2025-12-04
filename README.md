@@ -1,15 +1,15 @@
-# 🌐 Geoscope CLI
+# 🌐 Synscope CLI
 
-**Geoscope** is a powerful Multi-INT (Multi-Intelligence) fusion tool designed for open-source intelligence gathering, analysis, and visualization. It aggregates data from OSINT, SOCMINT, GEOINT, ADSINT, MARITINT, and CYBINT sources, analyzes it using local LLMs (Ollama), and presents actionable intelligence via interactive maps and military-style reports.
+**Synscope** is a powerful Multi-INT (Multi-Intelligence) fusion tool designed for open-source intelligence gathering, analysis, and visualization. It aggregates data from OSINT, SOCMINT, GEOINT, ADSINT, MARITINT, and CYBINT sources, analyzes it using local LLMs (Ollama), and presents actionable intelligence via interactive maps and military-style reports.
 
 > *"GREETINGS, PROFESSOR FALKEN. SHALL WE PLAY A GAME?"*
 > — Inspired by WOPR from WarGames (1983)
 
 <p align="center">
-  <img src="https://img.shields.io/github/stars/MacTash/Geoscope?style=flat-square" alt="Stars">
-  <img src="https://img.shields.io/github/license/MacTash/Geoscope?style=flat-square" alt="License">
-  <img src="https://img.shields.io/github/issues/MacTash/Geoscope?style=flat-square" alt="Issues">
-  <img src="https://img.shields.io/github/last-commit/MacTash/Geoscope?style=flat-square" alt="Last Commit">
+  <img src="https://img.shields.io/github/stars/MacTash/Synscope?style=flat-square" alt="Stars">
+  <img src="https://img.shields.io/github/license/MacTash/Synscope?style=flat-square" alt="License">
+  <img src="https://img.shields.io/github/issues/MacTash/Synscope?style=flat-square" alt="Issues">
+  <img src="https://img.shields.io/github/last-commit/MacTash/Synscope?style=flat-square" alt="Last Commit">
   <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="Python Version">
   <img src="https://img.shields.io/badge/Threat%20Intelligence-MultiINT-red?style=flat-square">
   <img src="https://img.shields.io/badge/Status-Alpha-orange?style=flat-square">
@@ -38,16 +38,16 @@
    - **Ollama** (Required for local AI analysis):
      - Download from [ollama.com](https://ollama.com/)
      - Install and start the service: `ollama serve`
-     - **Pull the Model**: Geoscope is optimized for Llama 3.2 (3B), which is lightweight and fast.
+     - **Pull the Model**: Synscope is optimized for Llama 3.2 (3B), which is lightweight and fast.
        ```bash
        ollama pull llama3.2:3b
        ```
      - *Note: You can change the model in `.env` if you prefer another (e.g., `mistral`, `llama3`).*
 
-2. **Install Geoscope**:
+2. **Install Synscope**:
    ```bash
-   git clone https://github.com/MacTash/geoscope.git
-   cd geoscope
+   git clone https://github.com/MacTash/synscope.git
+   cd synscope
    python3 -m venv venv
    source venv/bin/activate
    pip install -r requirements.txt
@@ -56,16 +56,16 @@
 
 3. **Initialize Database**:
    ```bash
-   geoscope init
+   synscope init
    ```
 
 ## 🎯 How It Works
 
-Geoscope operates in **5 phases**:
+Synscope operates in **5 phases**:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        GEOSCOPE ENGINE                          │
+│                        SYNSCOPE ENGINE                          │
 ├─────────────────────────────────────────────────────────────────┤
 │  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌─────┐ │
 │  │ OSINT  │ │SOCMINT │ │ GEOINT │ │ ADSINT │ │MARITINT│ │CYBER│ │
@@ -131,35 +131,35 @@ Generates military-style assessment with:
 ### 1. 📊 Status & Overview
 Check the system status and recent intelligence items.
 ```bash
-geoscope status
+synscope status
 ```
 
 ### 2. 🗺️ Interactive Maps
 Generate visual intelligence products.
 ```bash
 # Generate a map for a specific country
-geoscope map generate --country "Ukraine" --hours 72
+synscope map generate --country "Ukraine" --hours 72
 
 # REFER TO GEOINT section for more practical usages with nearly zero map generation errors.
 
 # Generate a global threat heatmap
-geoscope map heatmap
+synscope map heatmap
 ```
 
 ### 3. 🎖️ Intelligence Reports
 Generate comprehensive AI-synthesized reports.
 ```bash
 # Quick situation brief
-geoscope report brief --country "Taiwan"
+synscope report brief --country "Taiwan"
 
 # Full military-style assessment (runs a fresh sweep)
-geoscope report full "Iran" --sweep --html
+synscope report full "Iran" --sweep --html
 
 # Report on a specific threat topic
-geoscope report full "Ransomware" --sweep
+synscope report full "Ransomware" --sweep
 
 # Variations
-geoscope report full "country name" --nosweep --hours 24 or 48 or 72
+synscope report full "country name" --nosweep --hours 24 or 48 or 72
 ```
 
 ### 4. 🕵️ Intelligence Collection (Modules)
@@ -168,62 +168,62 @@ geoscope report full "country name" --nosweep --hours 24 or 48 or 72
 Track news and global events.
 ```bash
 # Fetch news articles
-geoscope osint fetch --keyword "South China Sea" --limit 20
+synscope osint fetch --keyword "South China Sea" --limit 20
 
 # Search stored OSINT
-geoscope osint search "naval exercises"
+synscope osint search "naval exercises"
 ```
 
 #### **SOCMINT (Social Media Intelligence)**
 Monitor social chatter.
 ```bash
 # Scrape recent posts
-geoscope socmint scrape --keyword "air defense" --limit 50
+synscope socmint scrape --keyword "air defense" --limit 50
 
 # Target specific users
-geoscope socmint scrape --keyword "frontline" --user "TheStudyofWar"
+synscope socmint scrape --keyword "frontline" --user "TheStudyofWar"
 
 # View trending topics
-geoscope socmint trending
+synscope socmint trending
 ```
 
 #### **CYBINT (Cyber Intelligence)**
 Track vulnerabilities and cyber threats.
 ```bash
 # Scan all configured threat feeds
-geoscope cybint scan --all
+synscope cybint scan --all
 
 # List active CISA exploits (KEV)
-geoscope cybint cves
+synscope cybint cves
 
 # Search for specific malware
-geoscope cybint search "LockBit"
+synscope cybint search "LockBit"
 ```
 
 #### **GEOINT (Geospatial Intelligence)**
 Find satellite imagery metadata.
 ```bash
 # Find recent clear imagery
-geoscope geoint sat --target "Gaza" --days 7 --clouds 20
+synscope geoint sat --target "Gaza" --days 7 --clouds 20
 
 # Get coordinates for a location
-geoscope geoint locate "Pyongyang"
+synscope geoint locate "Pyongyang"
 ```
 
 #### **ADSINT (Aircraft Intelligence)**
 Track military and interesting aircraft in real-time via ADS-B.
 ```bash
 # Scan a region for military aircraft
-geoscope adsint scan ukraine
-geoscope adsint scan taiwan
-geoscope adsint scan baltic
+synscope adsint scan ukraine
+synscope adsint scan taiwan
+synscope adsint scan baltic
 
 # Track a specific callsign
-geoscope adsint track FORTE   # RQ-4 Global Hawk
-geoscope adsint track REACH   # USAF Airlift
+synscope adsint track FORTE   # RQ-4 Global Hawk
+synscope adsint track REACH   # USAF Airlift
 
 # List recent tracks
-geoscope adsint list
+synscope adsint list
 ```
 
 **Available Regions:** `ukraine`, `taiwan`, `baltic`, `korea`, `gulf`, `mediterranean`
@@ -232,15 +232,15 @@ geoscope adsint list
 Track naval vessels and monitor maritime chokepoints.
 ```bash
 # Scan a maritime region
-geoscope maritint scan black_sea
-geoscope maritint scan taiwan_strait
-geoscope maritint scan persian_gulf
+synscope maritint scan black_sea
+synscope maritint scan taiwan_strait
+synscope maritint scan persian_gulf
 
 # Search for a specific vessel
-geoscope maritint search "Gerald Ford"
+synscope maritint search "Gerald Ford"
 
 # List recent maritime intel
-geoscope maritint list
+synscope maritint list
 ```
 
 **Available Regions:** `black_sea`, `baltic`, `south_china_sea`, `persian_gulf`, `taiwan_strait`, `mediterranean`, `arctic`
@@ -249,26 +249,26 @@ geoscope maritint list
 Export your intelligence database.
 ```bash
 # Export to JSON
-geoscope export --format json --output intel_dump.json
+synscope export --format json --output intel_dump.json
 
 # Export to CSV
-geoscope export --format csv
+synscope export --format csv
 ```
 
 ### 6. 🧹 Maintenance
 Clean up cache and old reports.
 ```bash
 # Remove __pycache__ directories
-geoscope clean
+synscope clean
 
 # Also remove old HTML reports/maps
-geoscope clean --reports
+synscope clean --reports
 
 # Clean everything
-geoscope clean --all
+synscope clean --all
 
 # Reset database (wipe all intel)
-geoscope reset --force
+synscope reset --force
 ```
 
 ## ⚙️ Configuration
@@ -279,7 +279,7 @@ Create a `.env` file in the root directory to customize settings:
 OLLAMA_HOST=http://localhost:11434
 MODEL_NAME=llama3.2:3b
 LOG_LEVEL=INFO
-DB_NAME=geoscope.db
+DB_NAME=synscope.db
 ```
 
 ## 🤝 Contributing
@@ -288,7 +288,7 @@ Contributions are welcome! Please submit a Pull Request.
 
 ## 🎮 Easter Eggs
 
-Run `geoscope init` and look for the WOPR greeting.
+Run `synscope init` and look for the WOPR greeting.
 
 ## ⚠️ Disclaimer
 

@@ -4,7 +4,7 @@ from datetime import datetime
 from dateutil import parser
 from rich.logging import RichHandler
 
-def setup_logger(name: str = "geoscope"):
+def setup_logger(name: str = "synscope"):
     """
     Configures a Rich-based logger for the application.
     """

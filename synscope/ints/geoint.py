@@ -3,15 +3,15 @@ import pystac_client
 from geopy.geocoders import Nominatim
 from datetime import datetime, timedelta
 from rich.console import Console
-from geoscope.database import SessionLocal, IntelItem
-from geoscope.core.utils import logger
+from synscope.database import SessionLocal, IntelItem
+from synscope.core.utils import logger
 
 console = Console()
 
 class GEOINTManager:
     def __init__(self):
         self.db = SessionLocal()
-        self.geocoder = Nominatim(user_agent="geoscope_toolkit_v2")
+        self.geocoder = Nominatim(user_agent="synscope_toolkit_v2")
         self.stac_api_url = "https://earth-search.aws.element84.com/v1"
 
     def get_coordinates(self, location_name: str):

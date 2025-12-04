@@ -15,11 +15,11 @@ dist/
 build/
 *.egg-info/
 
-# Geoscope Data
+# Synscope Data
 data/
 *.db
 *.sqlite3
-geoscope.db
+synscope.db
 
 # Logs
 *.log

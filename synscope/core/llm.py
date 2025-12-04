@@ -1,7 +1,7 @@
 import requests
 import json
-from geoscope.config import settings
-from geoscope.core.utils import logger
+from synscope.config import settings
+from synscope.core.utils import logger
 
 def analyze_text(text: str):
     """

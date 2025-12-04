@@ -6,21 +6,21 @@ from datetime import timedelta, datetime, timezone
 from sqlalchemy import or_
 
 # Internal Imports
-from geoscope.config import settings
-from geoscope.database import init_db, SessionLocal, IntelItem
-from geoscope.ints.osint import OSINTManager
-from geoscope.ints.socmint import SOCMINTManager
-from geoscope.ints.geoint import GEOINTManager
-from geoscope.ints.adsint import ADSINTManager
-from geoscope.ints.cybint import CYBINTManager
-from geoscope.ints.maritint import MARITINTManager
-from geoscope.core.theme import print_banner, print_defcon_status, calculate_defcon, print_header
+from synscope.config import settings
+from synscope.database import init_db, SessionLocal, IntelItem
+from synscope.ints.osint import OSINTManager
+from synscope.ints.socmint import SOCMINTManager
+from synscope.ints.geoint import GEOINTManager
+from synscope.ints.adsint import ADSINTManager
+from synscope.ints.cybint import CYBINTManager
+from synscope.ints.maritint import MARITINTManager
+from synscope.core.theme import print_banner, print_defcon_status, calculate_defcon, print_header
 
 # --- HELP TEXTS ---
-HELP_OSINT = "Fetch news articles via DuckDuckGo.\nExample: [green]geoscope osint fetch --keyword 'Ukraine'[/green]"
-HELP_SOCMINT = "Scrape Social Media (X, Reddit, Telegram).\nExample: [green]geoscope socmint scrape --keyword 'Cyberattack'[/green]"
-HELP_GEOINT = "Search Satellite Metadata (Sentinel-2).\nExample: [green]geoscope geoint sat --target 'Suez Canal'[/green]"
-HELP_REPORT = "Generate fusion intelligence briefings.\nExample: [green]geoscope report brief --country 'Ukraine'[/green]"
+HELP_OSINT = "Fetch news articles via DuckDuckGo.\nExample: [green]synscope osint fetch --keyword 'Ukraine'[/green]"
+HELP_SOCMINT = "Scrape Social Media (X, Reddit, Telegram).\nExample: [green]synscope socmint scrape --keyword 'Cyberattack'[/green]"
+HELP_GEOINT = "Search Satellite Metadata (Sentinel-2).\nExample: [green]synscope geoint sat --target 'Suez Canal'[/green]"
+HELP_REPORT = "Generate fusion intelligence briefings.\nExample: [green]synscope report brief --country 'Ukraine'[/green]"
 
 app = typer.Typer(help="Geoscope CLI - Multi-INT Geopolitical Toolkit", rich_markup_mode="rich")
 
@@ -88,9 +88,9 @@ def clean(
     Clean up cache files and old reports.
     
     [bold]Examples:[/bold]
-    geoscope clean              # Remove pycache only
-    geoscope clean --reports    # Also remove old reports
-    geoscope clean --all        # Remove everything
+    synscope clean              # Remove pycache only
+    synscope clean --reports    # Also remove old reports
+    synscope clean --all        # Remove everything
     """
     import shutil
     from pathlib import Path
@@ -148,7 +148,7 @@ def osint_fetch(
     Fetch news from DuckDuckGo.
     
     [bold]Example:[/bold]
-    geoscope osint fetch --keyword "Gaza" --limit 20
+    synscope osint fetch --keyword "Gaza" --limit 20
     """
     manager = OSINTManager()
     manager.bulk_fetch(keyword, limit)
@@ -212,13 +212,13 @@ def socmint_scrape(
     
     [bold]Examples:[/bold]
     1. Broad search:
-       geoscope socmint scrape --keyword "missile"
+       synscope socmint scrape --keyword "missile"
     
     2. Target X User:
-       geoscope socmint scrape --keyword "frontline" --user "ZelenskyyUa"
+       synscope socmint scrape --keyword "frontline" --user "ZelenskyyUa"
        
     3. Target Subreddit:
-       geoscope socmint scrape --keyword "analysis" --subreddit "geopolitics"
+       synscope socmint scrape --keyword "analysis" --subreddit "geopolitics"
     """
     manager = SOCMINTManager()
     manager.run_social_search(keyword, limit, user, subreddit)
@@ -285,7 +285,7 @@ def geoint_sat(
     Find recent satellite imagery metadata.
     
     [bold]Example:[/bold]
-    geoscope geoint sat --target "Kiev" --clouds 100
+    synscope geoint sat --target "Kiev" --clouds 100
     """
     manager = GEOINTManager()
     manager.search_satellite_metadata(target, days_back=days, cloud_max=clouds)
@@ -335,8 +335,8 @@ def adsint_scan(
     Scan a region for military aircraft via ADS-B.
     
     [bold]Example:[/bold]
-    geoscope adsint scan ukraine
-    geoscope adsint scan taiwan
+    synscope adsint scan ukraine
+    synscope adsint scan taiwan
     """
     manager = ADSINTManager()
     results = manager.scan_preset(region)
@@ -365,8 +365,8 @@ def maritint_scan(
     Scan a maritime region for naval activity.
     
     [bold]Example:[/bold]
-    geoscope maritint scan black_sea
-    geoscope maritint scan taiwan_strait
+    synscope maritint scan black_sea
+    synscope maritint scan taiwan_strait
     """
     manager = MARITINTManager()
     manager.scan_preset(region)
@@ -393,7 +393,7 @@ def cybint_scan(
     Fetch cyber threat intelligence from multiple sources.
     
     [bold]Example:[/bold]
-    geoscope cybint scan --all --limit 15
+    synscope cybint scan --all --limit 15
     """
     manager = CYBINTManager()
     if all_feeds:
@@ -482,9 +482,9 @@ def generate_brief(
     Generate Fusion Intelligence Report.
     
     [bold]Example:[/bold]
-    geoscope report brief --country "Ukraine" --hours 48
+    synscope report brief --country "Ukraine" --hours 48
     """
-    from geoscope.core.llm import generate_summary
+    from synscope.core.llm import generate_summary
     
     db = SessionLocal()
     
@@ -546,12 +546,12 @@ def generate_full(
     everything into a professional assessment using the LLM.
     
     [bold]Examples:[/bold]
-    geoscope report full "Ukraine"
-    geoscope report full "ransomware" --sweep --html
-    geoscope report full "China" --no-sweep --hours 48
+    synscope report full "Ukraine"
+    synscope report full "ransomware" --sweep --html
+    synscope report full "China" --no-sweep --hours 48
     """
     from rich.progress import Progress, SpinnerColumn, TextColumn
-    from geoscope.core.llm import generate_full_report, assess_topic
+    from synscope.core.llm import generate_full_report, assess_topic
     from pathlib import Path
     import time
     
@@ -740,7 +740,7 @@ def generate_full(
     if with_map:
         console.print("\n[cyan]Phase 5: Map Generation[/cyan]")
         try:
-            from geoscope.core.mapper import GeoMapper
+            from synscope.core.mapper import GeoMapper
             mapper = GeoMapper()
             map_path = mapper.generate_map(country=target, hours=hours, open_browser=True)
         except Exception as e:
@@ -763,9 +763,9 @@ def map_generate(
     Generate an interactive intelligence map.
     
     [bold]Example:[/bold]
-    geoscope map generate --country "Ukraine" --hours 48
+    synscope map generate --country "Ukraine" --hours 48
     """
-    from geoscope.core.mapper import GeoMapper
+    from synscope.core.mapper import GeoMapper
     mapper = GeoMapper()
     mapper.generate_map(country=country, hours=hours, open_browser=not no_open)
 
@@ -778,9 +778,9 @@ def map_heatmap(
     Generate a threat intensity heatmap.
     
     [bold]Example:[/bold]
-    geoscope map heatmap --country "Russia"
+    synscope map heatmap --country "Russia"
     """
-    from geoscope.core.mapper import GeoMapper
+    from synscope.core.mapper import GeoMapper
     mapper = GeoMapper()
     mapper.generate_heatmap(country=country, hours=hours)
 
@@ -848,8 +848,8 @@ def export(
     Export all intelligence to JSON or CSV.
     
     [bold]Examples:[/bold]
-    geoscope export --format json
-    geoscope export --format csv --output intel.csv
+    synscope export --format json
+    synscope export --format csv --output intel.csv
     """
     import json
     import csv

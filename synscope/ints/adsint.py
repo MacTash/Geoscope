@@ -7,8 +7,8 @@ import requests
 from datetime import datetime, timezone
 from rich.console import Console
 from rich.table import Table
-from geoscope.database import SessionLocal, IntelItem
-from geoscope.core.utils import logger
+from synscope.database import SessionLocal, IntelItem
+from synscope.core.utils import logger
 
 console = Console()
 

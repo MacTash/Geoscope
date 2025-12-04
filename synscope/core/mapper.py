@@ -9,8 +9,8 @@ import webbrowser
 from pathlib import Path
 from datetime import datetime, timedelta, timezone
 from rich.console import Console
-from geoscope.database import SessionLocal, IntelItem
-from geoscope.config import settings
+from synscope.database import SessionLocal, IntelItem
+from synscope.config import settings
 
 console = Console()
 
@@ -177,7 +177,7 @@ class GeoMapper:
         folium.LayerControl().add_to(m)
         
         # Save map
-        filename = f"geoscope_map_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+        filename = f"synscope_map_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
         output_path = self.output_dir / filename
         m.save(str(output_path))
         
@@ -263,7 +263,7 @@ class GeoMapper:
             gradient={0.2: 'blue', 0.4: 'lime', 0.6: 'yellow', 0.8: 'orange', 1: 'red'}
         ).add_to(m)
         
-        filename = f"geoscope_heatmap_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
+        filename = f"synscope_heatmap_{datetime.now().strftime('%Y%m%d_%H%M%S')}.html"
         output_path = self.output_dir / filename
         m.save(str(output_path))
         

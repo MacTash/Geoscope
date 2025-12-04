@@ -1,9 +1,9 @@
 from duckduckgo_search import DDGS
 from datetime import datetime, timezone
 from rich.console import Console
-from geoscope.database import SessionLocal, IntelItem
-from geoscope.core.llm import analyze_text
-from geoscope.core.utils import logger
+from synscope.database import SessionLocal, IntelItem
+from synscope.core.llm import analyze_text
+from synscope.core.utils import logger
 
 console = Console()
 

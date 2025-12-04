@@ -28,7 +28,7 @@ class Config:
 
     # Database Settings
     # Stores the SQLite DB inside the 'data' folder
-    DB_NAME = os.getenv("DB_NAME", "geoscope.db")
+    DB_NAME = os.getenv("DB_NAME", "synscope.db")
     DB_URL = f"sqlite:///{DATA_DIR}/{DB_NAME}"
 
     # Scraping / Network Settings

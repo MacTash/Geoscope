@@ -1,5 +1,5 @@
 """
-Geoscope Theme - WarGames DEFCON Style
+Synscope Theme - WarGames DEFCON Style
 Inspired by the WOPR terminal from WarGames (1983)
 """
 
@@ -12,15 +12,15 @@ from datetime import datetime
 console = Console()
 
 # DEFCON ASCII Banner
-GEOSCOPE_BANNER = """
+SYNSCOPE_BANNER = """
 ╔═══════════════════════════════════════════════════════════════════════════════╗
 ║                                                                               ║
-║   ██████╗ ███████╗ ██████╗ ███████╗ ██████╗ ██████╗ ██████╗ ███████╗          ║
-║  ██╔════╝ ██╔════╝██╔═══██╗██╔════╝██╔════╝██╔═══██╗██╔══██╗██╔════╝          ║
-║  ██║  ███╗█████╗  ██║   ██║███████╗██║     ██║   ██║██████╔╝█████╗            ║
-║  ██║   ██║██╔══╝  ██║   ██║╚════██║██║     ██║   ██║██╔═══╝ ██╔══╝            ║
-║  ╚██████╔╝███████╗╚██████╔╝███████║╚██████╗╚██████╔╝██║     ███████╗          ║
-║   ╚═════╝ ╚══════╝ ╚═════╝ ╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚══════╝          ║
+║   ███████╗██╗   ██╗███╗   ██╗███████╗ ██████╗ ██████╗ ██████╗ ███████╗        ║
+║   ██╔════╝╚██╗ ██╔╝████╗  ██║██╔════╝██╔════╝██╔═══██╗██╔══██╗██╔════╝        ║
+║   ███████╗ ╚████╔╝ ██╔██╗ ██║███████╗██║     ██║   ██║██████╔╝█████╗          ║
+║   ╚════██║  ╚██╔╝  ██║╚██╗██║╚════██║██║     ██║   ██║██╔═══╝ ██╔══╝          ║
+║   ███████║   ██║   ██║ ╚████║███████║╚██████╗╚██████╔╝██║     ███████╗        ║
+║   ╚══════╝   ╚═╝   ╚═╝  ╚═══╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝     ╚══════╝        ║
 ║                                                                               ║
 ║                    M U L T I - I N T   F U S I O N   E N G I N E              ║
 ║                                                                               ║
@@ -66,8 +66,8 @@ def calculate_defcon(avg_threat_score: float, critical_count: int) -> int:
 
 
 def print_banner(show_greeting: bool = False):
-    """Print the GEOSCOPE ASCII banner."""
-    console.print(GEOSCOPE_BANNER, style="bold green")
+    """Print the SYNSCOPE ASCII banner."""
+    console.print(SYNSCOPE_BANNER, style="bold green")
     if show_greeting:
         console.print(WOPR_GREETING, style="green")
 

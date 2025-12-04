@@ -4,8 +4,8 @@ import json
 from datetime import datetime
 from rich.console import Console
 from rich.progress import Progress
-from geoscope.database import SessionLocal, IntelItem
-from geoscope.core.utils import logger
+from synscope.database import SessionLocal, IntelItem
+from synscope.core.utils import logger
 
 console = Console()
 

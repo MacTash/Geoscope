@@ -1,7 +1,7 @@
 from datetime import datetime, timezone
 from sqlalchemy import create_engine, Column, Integer, String, Float, Text, DateTime
 from sqlalchemy.orm import declarative_base, sessionmaker
-from geoscope.config import settings
+from synscope.config import settings
 
 Base = declarative_base()
 
