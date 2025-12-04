@@ -1,6 +1,9 @@
 # 🌐 Geoscope CLI
 
-**Geoscope** is a powerful Multi-INT (Multi-Intelligence) fusion tool designed for open-source intelligence gathering, analysis, and visualization. It aggregates data from OSINT, SOCMINT, GEOINT, SIGNALS, and CYBINT sources, analyzes it using local LLMs (Ollama), and presents actionable intelligence via interactive maps and military-style reports.
+**Geoscope** is a powerful Multi-INT (Multi-Intelligence) fusion tool designed for open-source intelligence gathering, analysis, and visualization. It aggregates data from OSINT, SOCMINT, GEOINT, ADSINT, MARITINT, and CYBINT sources, analyzes it using local LLMs (Ollama), and presents actionable intelligence via interactive maps and military-style reports.
+
+> *"GREETINGS, PROFESSOR FALKEN. SHALL WE PLAY A GAME?"*
+> — Inspired by WOPR from WarGames (1983)
 
 <p align="center">
   <img src="https://img.shields.io/github/stars/MacTash/Geoscope?style=flat-square" alt="Stars">
@@ -21,11 +24,13 @@
   - **OSINT**: News aggregation via DuckDuckGo.
   - **SOCMINT**: Social media scraping (Twitter/X, Reddit, Telegram).
   - **GEOINT**: Satellite imagery metadata (Sentinel-2, Landsat).
-  - **SIGNALS**: SDR log ingestion and EAM (Emergency Action Message) detection.
+  - **ADSINT**: Real-time military aircraft tracking via ADS-B (OpenSky Network).
+  - **MARITINT**: Naval vessel and ship tracking with regional intelligence.
   - **CYBINT**: Cyber threat intelligence from CISA KEV and 7+ security feeds.
 - **AI Analysis**: Uses local LLMs (Llama 3, Mistral) via Ollama for threat scoring and summarization.
 - **Visualization**: Interactive Folium maps and threat heatmaps.
 - **Reporting**: Generates professional military-style intelligence assessments (SITREPs).
+- **WarGames DEFCON Theme**: Retro terminal aesthetic inspired by WOPR from WarGames (1983).
 
 ## 🛠️ Installation
 
@@ -55,23 +60,72 @@
    geoscope init
    ```
 
-What it does (5 phases):
-📊 Topic Assessment - LLM analyzes target, suggests keywords
-📥 Collection Sweep - Fetches from all relevant INT sources
-🗃️ Data Aggregation - Queries and categorizes intel
-🤖 LLM Synthesis - Generates military-style assessment with:
-Executive Summary
-Threat Matrix
-Key Intelligence by domain
-IOCs & TTPs (the llm might rarely include OSINT x.com accounts as IOCs)
-Confidence assessment
-🗺️ Map Generation - Creates interactive Folium map
-Flags:
-        Flag	                                Effect
---sweep / --no-sweep	                Enable/disable fresh data collection
---html	                                Export report to HTML file
---hours 24,48,72	                    Lookback window for existing data
---no-map	                            Skip map generation
+## 🎯 How It Works
+
+Geoscope operates in **5 phases**:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        GEOSCOPE ENGINE                          │
+├─────────────────────────────────────────────────────────────────┤
+│  ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌─────┐ │
+│  │ OSINT  │ │SOCMINT │ │ GEOINT │ │ ADSINT │ │MARITINT│ │CYBER│ │
+│  └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘ └──┬──┘ │
+│      └──────────┴─────┬────┴──────────┴──────────┴─────────┘    │
+│                       ▼                                         │
+│               ┌───────────────┐                                 │
+│               │   SQLite DB   │ ◄─── All intel stored locally   │
+│               └───────┬───────┘                                 │
+│                       ▼                                         │
+│               ┌───────────────┐                                 │
+│               │  Ollama LLM   │ ◄─── Local AI (no cloud APIs)   │
+│               │ (Llama 3.2)   │                                 │
+│               └───────┬───────┘                                 │
+│                       ▼                                         │
+│           ┌───────────────────────┐                             │
+│           │  Reports / Maps / UI  │                             │
+│           └───────────────────────┘                             │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Phase 1: 📊 Topic Assessment
+LLM analyzes the target and suggests optimal keywords for collection.
+
+### Phase 2: 📥 Collection Sweep
+All relevant INT modules fetch fresh data from their sources:
+| Module | Source | Method |
+|--------|--------|--------|
+| OSINT | DuckDuckGo News | Web scraping |
+| SOCMINT | X/Reddit/Telegram | `site:` search operators |
+| GEOINT | Sentinel Hub | STAC API |
+| ADSINT | OpenSky Network | REST API |
+| MARITINT | Regional patterns | Intel database |
+| CYBINT | CISA + RSS feeds | API + RSS parsing |
+
+### Phase 3: 🗃️ Data Aggregation
+Intel is stored in SQLite with: `timestamp`, `category`, `summary`, `country`, `coordinates`, `threat_level`, `threat_score`, `confidence`.
+
+### Phase 4: 🤖 LLM Synthesis
+Generates military-style assessment with:
+- Executive Summary
+- Threat Matrix
+- Key Intelligence by domain
+- IOCs & TTPs
+- Confidence assessment
+
+### Phase 5: 🗺️ Display & Visualization
+- **DEFCON Status**: Real-time threat level (1-5) based on intel
+- **Interactive Maps**: Folium-based with clustered markers
+- **Heatmaps**: Visualize threat density globally
+- **WarGames Theme**: Retro green-on-black terminal aesthetic
+
+### Report Flags
+| Flag | Effect |
+|------|--------|
+| `--sweep` / `--no-sweep` | Enable/disable fresh data collection |
+| `--html` | Export report to HTML file |
+| `--hours 24,48,72` | Lookback window for existing data |
+| `--no-map` | Skip map generation |
 
 ## 📖 Usage Guide
 
@@ -157,15 +211,40 @@ geoscope geoint sat --target "Gaza" --days 7 --clouds 20
 geoscope geoint locate "Pyongyang"
 ```
 
-#### **SIGNALS (Signals Intelligence)** (COMING SOON)
-Analyze radio intercepts.
+#### **ADSINT (Aircraft Intelligence)**
+Track military and interesting aircraft in real-time via ADS-B.
 ```bash
-# Ingest SDR logs
-geoscope signals ingest --file logs/sdr_capture.txt
+# Scan a region for military aircraft
+geoscope adsint scan ukraine
+geoscope adsint scan taiwan
+geoscope adsint scan baltic
 
-# Analyze text for EAM patterns
-geoscope signals analyze "SKYKING SKYKING DO NOT ANSWER"
+# Track a specific callsign
+geoscope adsint track FORTE   # RQ-4 Global Hawk
+geoscope adsint track REACH   # USAF Airlift
+
+# List recent tracks
+geoscope adsint list
 ```
+
+**Available Regions:** `ukraine`, `taiwan`, `baltic`, `korea`, `gulf`, `mediterranean`
+
+#### **MARITINT (Maritime Intelligence)**
+Track naval vessels and monitor maritime chokepoints.
+```bash
+# Scan a maritime region
+geoscope maritint scan black_sea
+geoscope maritint scan taiwan_strait
+geoscope maritint scan persian_gulf
+
+# Search for a specific vessel
+geoscope maritint search "Gerald Ford"
+
+# List recent maritime intel
+geoscope maritint list
+```
+
+**Available Regions:** `black_sea`, `baltic`, `south_china_sea`, `persian_gulf`, `taiwan_strait`, `mediterranean`, `arctic`
 
 ### 5. 📤 Data Management
 Export your intelligence database.
@@ -175,6 +254,22 @@ geoscope export --format json --output intel_dump.json
 
 # Export to CSV
 geoscope export --format csv
+```
+
+### 6. 🧹 Maintenance
+Clean up cache and old reports.
+```bash
+# Remove __pycache__ directories
+geoscope clean
+
+# Also remove old HTML reports/maps
+geoscope clean --reports
+
+# Clean everything
+geoscope clean --all
+
+# Reset database (wipe all intel)
+geoscope reset --force
 ```
 
 ## ⚙️ Configuration
@@ -192,6 +287,14 @@ DB_NAME=geoscope.db
 
 Contributions are welcome! Please submit a Pull Request.
 
+## 🎮 Easter Eggs
+
+Run `geoscope init` and look for the WOPR greeting.
+
 ## ⚠️ Disclaimer
 
 This tool is for **educational and research purposes only**. The authors are not responsible for misuse. Always adhere to local laws and terms of service when scraping data.
+
+---
+
+*"The only winning move is not to play."* — WOPR

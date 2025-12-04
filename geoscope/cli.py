@@ -11,8 +11,10 @@ from geoscope.database import init_db, SessionLocal, IntelItem
 from geoscope.ints.osint import OSINTManager
 from geoscope.ints.socmint import SOCMINTManager
 from geoscope.ints.geoint import GEOINTManager
-from geoscope.ints.signals import SignalsManager
+from geoscope.ints.adsint import ADSINTManager
 from geoscope.ints.cybint import CYBINTManager
+from geoscope.ints.maritint import MARITINTManager
+from geoscope.core.theme import print_banner, print_defcon_status, calculate_defcon, print_header
 
 # --- HELP TEXTS ---
 HELP_OSINT = "Fetch news articles via DuckDuckGo.\nExample: [green]geoscope osint fetch --keyword 'Ukraine'[/green]"
@@ -26,14 +28,16 @@ app = typer.Typer(help="Geoscope CLI - Multi-INT Geopolitical Toolkit", rich_mar
 osint_app = typer.Typer(help=HELP_OSINT, rich_markup_mode="rich")
 socmint_app = typer.Typer(help=HELP_SOCMINT, rich_markup_mode="rich")
 geoint_app = typer.Typer(help=HELP_GEOINT, rich_markup_mode="rich")
-signals_app = typer.Typer(help="Signals Intelligence (HFGCS/Logs)", rich_markup_mode="rich")
+adsint_app = typer.Typer(help="Aircraft Intelligence (ADS-B Tracking)", rich_markup_mode="rich")
+maritint_app = typer.Typer(help="Maritime Intelligence (Naval/Ship Tracking)", rich_markup_mode="rich")
 cybint_app = typer.Typer(help="Cyber Intelligence (CISA/Exploits)", rich_markup_mode="rich")
 report_app = typer.Typer(help=HELP_REPORT, rich_markup_mode="rich")
 
 app.add_typer(osint_app, name="osint")
 app.add_typer(socmint_app, name="socmint")
 app.add_typer(geoint_app, name="geoint")
-app.add_typer(signals_app, name="signals")
+app.add_typer(adsint_app, name="adsint")
+app.add_typer(maritint_app, name="maritint")
 app.add_typer(cybint_app, name="cybint")
 app.add_typer(report_app, name="report")
 
@@ -43,9 +47,10 @@ console = Console()
 
 @app.command()
 def init():
-    """Initialize the Database."""
+    """Initialize the Database with DEFCON-style welcome."""
+    print_banner(show_greeting=True)
     init_db()
-    console.print("[bold green]System Initialized. Database Ready.[/bold green]")
+    console.print("[bold green]SYSTEM INITIALIZED. DATABASE ONLINE.[/bold green]")
 
 @app.command()
 def reset(
@@ -71,6 +76,67 @@ def reset(
     # Re-initialize immediately
     init_db()
     console.print("[bold green]System Reset Complete. New database ready.[/bold green]")
+
+
+@app.command()
+def clean(
+    pycache: bool = typer.Option(True, "--pycache/--no-pycache", help="Remove __pycache__ directories"),
+    reports: bool = typer.Option(False, "--reports", "-r", help="Remove old HTML reports and maps"),
+    all_clean: bool = typer.Option(False, "--all", "-a", help="Clean everything")
+):
+    """
+    Clean up cache files and old reports.
+    
+    [bold]Examples:[/bold]
+    geoscope clean              # Remove pycache only
+    geoscope clean --reports    # Also remove old reports
+    geoscope clean --all        # Remove everything
+    """
+    import shutil
+    from pathlib import Path
+    
+    project_root = Path(__file__).resolve().parent.parent
+    
+    removed_count = 0
+    
+    # Clean __pycache__
+    if pycache or all_clean:
+        console.print("[cyan]Cleaning __pycache__ directories...[/cyan]")
+        for cache_dir in project_root.rglob("__pycache__"):
+            try:
+                shutil.rmtree(cache_dir)
+                removed_count += 1
+                console.print(f"  [dim]Removed: {cache_dir}[/dim]")
+            except Exception as e:
+                console.print(f"  [red]Failed: {cache_dir} ({e})[/red]")
+        
+        # Also remove .pyc files
+        for pyc_file in project_root.rglob("*.pyc"):
+            try:
+                pyc_file.unlink()
+                removed_count += 1
+            except:
+                pass
+    
+    # Clean old reports and maps
+    if reports or all_clean:
+        console.print("[cyan]Cleaning old reports and maps...[/cyan]")
+        
+        data_dir = settings.DATA_DIR
+        maps_dir = data_dir / "maps"
+        reports_dir = data_dir / "reports"
+        
+        for target_dir in [maps_dir, reports_dir]:
+            if target_dir.exists():
+                for html_file in target_dir.glob("*.html"):
+                    try:
+                        html_file.unlink()
+                        removed_count += 1
+                        console.print(f"  [dim]Removed: {html_file.name}[/dim]")
+                    except Exception as e:
+                        console.print(f"  [red]Failed: {html_file} ({e})[/red]")
+    
+    console.print(f"[bold green]✓ Cleanup complete. Removed {removed_count} items.[/bold green]")
 
 # --- OSINT ---
 @osint_app.command("fetch")
@@ -260,49 +326,62 @@ def geoint_locate(location: str = typer.Argument(..., help="Location to geocode"
         console.print(f"[red]Could not geocode '{location}'[/red]")
 
 
-# --- SIGNALS ---
-@signals_app.command("ingest")
-def signals_ingest(file: str = typer.Option(..., help="Path to SDR text log")):
-    """Ingest SDR logs for EAM patterns."""
-    manager = SignalsManager()
-    manager.ingest_log_file(file)
-
-@signals_app.command("list")
-def signals_list(limit: int = typer.Option(10, help="Max items")):
-    """List intercepted signals."""
-    from rich.table import Table
-    db = SessionLocal()
-    items = db.query(IntelItem).filter(
-        IntelItem.int_category == "COMINT"
-    ).order_by(IntelItem.timestamp.desc()).limit(limit).all()
+# --- ADSINT (Aircraft Intelligence) ---
+@adsint_app.command("scan")
+def adsint_scan(
+    region: str = typer.Argument("ukraine", help="Region: ukraine, taiwan, baltic, korea, gulf, mediterranean")
+):
+    """
+    Scan a region for military aircraft via ADS-B.
     
-    table = Table(title="📡 SIGNALS Intelligence")
-    table.add_column("Time", style="dim")
-    table.add_column("Type", style="orange3")
-    table.add_column("Content")
-    table.add_column("Priority", style="red")
+    [bold]Example:[/bold]
+    geoscope adsint scan ukraine
+    geoscope adsint scan taiwan
+    """
+    manager = ADSINTManager()
+    results = manager.scan_preset(region)
+    if results:
+        console.print(f"[green]Tracked {len(results)} military aircraft.[/green]")
+
+@adsint_app.command("track")
+def adsint_track(callsign: str = typer.Argument(..., help="Aircraft callsign (e.g., REACH, FORTE)")):
+    """Track a specific aircraft by callsign."""
+    manager = ADSINTManager()
+    manager.track_callsign(callsign)
+
+@adsint_app.command("list")
+def adsint_list(limit: int = typer.Option(10, help="Max items")):
+    """List recently tracked aircraft."""
+    manager = ADSINTManager()
+    manager.list_recent(limit)
+
+
+# --- MARITINT (Maritime Intelligence) ---
+@maritint_app.command("scan")
+def maritint_scan(
+    region: str = typer.Argument("black_sea", help="Region: black_sea, baltic, south_china_sea, persian_gulf, taiwan_strait, mediterranean, arctic")
+):
+    """
+    Scan a maritime region for naval activity.
     
-    for item in items:
-        table.add_row(
-            str(item.timestamp)[:16],
-            item.keyword or "SIGINT",
-            (item.summary or "")[:50] + "...",
-            item.threat_level or "-"
-        )
-    console.print(table)
+    [bold]Example:[/bold]
+    geoscope maritint scan black_sea
+    geoscope maritint scan taiwan_strait
+    """
+    manager = MARITINTManager()
+    manager.scan_preset(region)
 
-@signals_app.command("analyze")
-def signals_analyze(text: str = typer.Argument(..., help="Text to analyze for EAM patterns")):
-    """Analyze text for EAM signal patterns."""
-    manager = SignalsManager()
-    patterns = manager.detect_eam_patterns(text)
-    if patterns:
-        console.print(f"[green]Detected {len(patterns)} patterns:[/green]")
-        for p in patterns:
-            console.print(f"  [{p['priority']}] {p['type']}: {p['content'][:60]}...")
-    else:
-        console.print("[yellow]No EAM patterns detected.[/yellow]")
+@maritint_app.command("search")
+def maritint_search(name: str = typer.Argument(..., help="Vessel name or MMSI")):
+    """Search for a specific vessel."""
+    manager = MARITINTManager()
+    manager.search_vessel(name)
 
+@maritint_app.command("list")
+def maritint_list(limit: int = typer.Option(10, help="Max items")):
+    """List recent maritime intelligence."""
+    manager = MARITINTManager()
+    manager.list_recent(limit)
 
 # --- CYBINT ---
 @cybint_app.command("scan")
@@ -710,10 +789,12 @@ def map_heatmap(
 @app.command()
 def status():
     """
-    Show database statistics and recent activity.
+    Show DEFCON status and database statistics.
     """
     from rich.table import Table
     from sqlalchemy import func
+    
+    print_banner()
     
     db = SessionLocal()
     
@@ -725,24 +806,36 @@ def status():
     
     total = sum(s[1] for s in stats)
     
+    # Calculate threat metrics
+    critical_count = db.query(IntelItem).filter(IntelItem.threat_level == "CRITICAL").count()
+    avg_score_result = db.query(func.avg(IntelItem.threat_score)).scalar()
+    avg_score = float(avg_score_result) if avg_score_result else 0.0
+    
+    # Calculate and display DEFCON level
+    defcon_level = calculate_defcon(avg_score, critical_count)
+    print_defcon_status(defcon_level, {
+        "total": total,
+        "critical": critical_count,
+        "avg_score": avg_score
+    })
+    
     # Recent items
     recent = db.query(IntelItem).order_by(IntelItem.timestamp.desc()).limit(5).all()
     
-    # Display stats
-    console.print(Panel(f"[bold]Total Intelligence Items:[/bold] {total}", title="📊 GEOSCOPE STATUS"))
-    
+    # Display stats table
     if stats:
-        table = Table(title="Items by Category")
-        table.add_column("Category", style="cyan")
-        table.add_column("Count", style="green")
+        table = Table(title="═══ INTELLIGENCE BY DOMAIN ═══", border_style="green", header_style="bold green")
+        table.add_column("CATEGORY", style="cyan")
+        table.add_column("COUNT", style="green")
         for cat, count in stats:
             table.add_row(cat, str(count))
         console.print(table)
     
     if recent:
-        console.print("\n[bold]Recent Activity:[/bold]")
+        console.print("\\n[bold green]>>> RECENT ACTIVITY[/bold green]")
         for item in recent:
-            console.print(f"  [{item.int_category}] {item.summary[:60]}... ({item.timestamp})")
+            threat_style = "red" if item.threat_level == "CRITICAL" else "yellow" if item.threat_level == "HIGH" else "dim"
+            console.print(f"  [{item.int_category}] {item.summary[:60]}...", style=threat_style)
 
 
 # --- EXPORT COMMAND ---
