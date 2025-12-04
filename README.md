@@ -2,7 +2,14 @@
 
 **Geoscope** is a powerful Multi-INT (Multi-Intelligence) fusion tool designed for open-source intelligence gathering, analysis, and visualization. It aggregates data from OSINT, SOCMINT, GEOINT, SIGNALS, and CYBINT sources, analyzes it using local LLMs (Ollama), and presents actionable intelligence via interactive maps and military-style reports.
 
-![Geoscope Map](https://placeholder-image-url.com/map_preview.png)
+<p align="center">
+  <img src="https://img.shields.io/github/stars/MacTash/Geoscope?style=flat-square" alt="Stars">
+  <img src="https://img.shields.io/github/license/MacTash/Geoscope?style=flat-square" alt="License">
+  <img src="https://img.shields.io/github/issues/MacTash/Geoscope?style=flat-square" alt="Issues">
+  <img src="https://img.shields.io/github/last-commit/MacTash/Geoscope?style=flat-square" alt="Last Commit">
+  <img src="https://img.shields.io/badge/python-3.10%2B-blue?style=flat-square" alt="Python Version">
+</p>
+
 
 ## 🚀 Features
 
